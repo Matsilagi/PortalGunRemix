@@ -1,9 +1,5 @@
 AddCSLuaFile("shared.lua")
 
-if CLIENT then
-	game.AddParticles("particles/cleansers.pcf")
-end
-
 ENT.Type = "anim"
 ENT.Base = "base_anim"
 ENT.PrintName = "Portal Ball"
@@ -11,186 +7,113 @@ ENT.Author = "Mahalis"
 ENT.Spawnable = false
 ENT.AdminSpawnable = false
 
-		useInstant = CreateConVar("portal_instant", 0, {FCVAR_ARCHIVE,FCVAR_REPLICATED,FCVAR_SERVER_CAN_EXECUTE}, "Make portals create instantly and don't use the projectile.")
-		ballEnable = CreateConVar("portal_projectile_ball","1",1,"If the ball is enabled")
+useInstant = CreateConVar("portal_instant", 0, {FCVAR_ARCHIVE, FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Make portals create instantly and don't use the projectile.")
+ballEnable = CreateConVar("portal_projectile_ball", "1", 1, "If the ball is enabled")
+
+function ENT:SetupDataTables()
+	self:NetworkVar("Int", "Kind")
+	self:NetworkVar("Entity", "Weapon")
+
+	self:NetworkVar("Int", "Color1")
+	self:NetworkVar("Int", "Color2")
+end
 
 function ENT:Initialize()
-	self.Entity:PhysicsInit(SOLID_VPHYSICS)
-	self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
-	self.Entity:SetModel("models/hunter/misc/sphere025x025.mdl")
-	self.Entity:PhysicsInitSphere(1,"Metal")
-	local phy = self.Entity:GetPhysicsObject()
-	if phy:IsValid() then
-		phy:EnableGravity(false)
-		phy:EnableDrag(false)
-		phy:EnableCollisions(false)
-	end
-	self.Entity:SetCollisionGroup(COLLISION_GROUP_WEAPON)
-	self.Entity:DrawShadow(false)
-	self:SetNoDraw(false)
-	timer.Simple(.01,function() if self:IsValid() then self:SetNoDraw(true) end end)
-	
+	self:SetMoveType(MOVETYPE_VPHYSICS)
+	self:SetModel("models/hunter/misc/sphere025x025.mdl")
 
+	if SERVER then
+		self:PhysicsInit(SOLID_VPHYSICS)
+		self:PhysicsInitSphere(1, "Metal")
+
+		local phys = self:GetPhysicsObject()
+		if phys:IsValid() then
+			phys:EnableGravity(false)
+			phys:EnableDrag(false)
+			phys:EnableCollisions(false)
+		end
+	else
+		self:SetEffects(self:GetKind())
+	end
+
+	self:SetCollisionGroup(COLLISION_GROUP_WEAPON)
+	self:DrawShadow(false)
+	--self:SetNoDraw(false)
+	--timer.Simple(.01, function() if self:IsValid() then self:SetNoDraw(true) end end)
 end
+
+local SWITCH_PARTICLE_FORMATSTR = {
+	[14] = "portal_gray_projectile_%s",
+	[13] = "portal_gray_projectile_%s",
+	[12] = "portal_gray_projectile_%s",
+	[11] = "portal_2_projectile_%s_pbody",
+	[10] = "portal_2_projectile_%s_pink_green",
+	[9] = "portal_2_projectile_%s_pink_green",
+	[8] = "portal_2_projectile_%s_atlas",
+	[7] = "portal_1_projectile_%s",
+	[6] = "portal_1_projectile_%s_atlas",
+	[5] = "portal_1_projectile_%s_pink_green",
+	[4] = "portal_1_projectile_%s_pink_green",
+	[3] = "portal_1_projectile_%s_pink_green",
+	[2] = "portal_1_projectile_%s_pbody",
+	[1] = "portal_2_projectile_%s",
+	[0] = "portal_2_projectile_%s_pbody"
+}
 
 function ENT:SetEffects(type)
-	self:SetNWInt("Kind", type)
+	self:SetKind(type)
 
-if ballEnable:GetBool() then 
-if !useInstant:GetBool() then 
+	if ballEnable:GetBool() then
+		local owner, iPortalColor1, iPortalColor2 = NULL, self:GetColor1(), self:GetColor2()
+		if SERVER and self:GetWeapon():IsValid() then
+			owner = self:GetWeapon():GetOwner()
 
-	if type == TYPE_BLUE then
-if GetConVarNumber("portal_color_1") >=14 then
-	ParticleEffectAttach("portal_gray_projectile_ball",PATTACH_ABSORIGIN_FOLLOW,self,1)
-elseif GetConVarNumber("portal_color_1") >=13 then
-	ParticleEffectAttach("portal_gray_projectile_ball",PATTACH_ABSORIGIN_FOLLOW,self,1)
-elseif GetConVarNumber("portal_color_1") >=12 then
-	ParticleEffectAttach("portal_gray_projectile_ball",PATTACH_ABSORIGIN_FOLLOW,self,1)
-elseif GetConVarNumber("portal_color_1") >=11 then
-	ParticleEffectAttach("portal_2_projectile_ball_pbody",PATTACH_ABSORIGIN_FOLLOW,self,1)
-elseif GetConVarNumber("portal_color_1") >=10 then
-	ParticleEffectAttach("portal_2_projectile_ball_pink_green",PATTACH_ABSORIGIN_FOLLOW,self,1)
-elseif GetConVarNumber("portal_color_1") >=9 then
-	ParticleEffectAttach("portal_2_projectile_ball_pink_green",PATTACH_ABSORIGIN_FOLLOW,self,1)
-elseif GetConVarNumber("portal_color_1") >=8 then
-	ParticleEffectAttach("portal_2_projectile_ball_atlas",PATTACH_ABSORIGIN_FOLLOW,self,1)
-elseif GetConVarNumber("portal_color_1") >=7 then
-	ParticleEffectAttach("portal_1_projectile_ball",PATTACH_ABSORIGIN_FOLLOW,self,1)
-elseif GetConVarNumber("portal_color_1") >=6 then
-	ParticleEffectAttach("portal_1_projectile_ball_atlas",PATTACH_ABSORIGIN_FOLLOW,self,1)
-elseif GetConVarNumber("portal_color_1") >=5 then
-	ParticleEffectAttach("portal_1_projectile_ball_pink_green",PATTACH_ABSORIGIN_FOLLOW,self,1)
-elseif GetConVarNumber("portal_color_1") >=4 then
-	ParticleEffectAttach("portal_1_projectile_ball_pink_green",PATTACH_ABSORIGIN_FOLLOW,self,1)
-elseif GetConVarNumber("portal_color_1") >=3 then
-	ParticleEffectAttach("portal_1_projectile_ball_pink_green",PATTACH_ABSORIGIN_FOLLOW,self,1)
-elseif GetConVarNumber("portal_color_1") >=2 then
-	ParticleEffectAttach("portal_1_projectile_ball_pbody",PATTACH_ABSORIGIN_FOLLOW,self,1)
-elseif GetConVarNumber("portal_color_1") >=1 then
-	ParticleEffectAttach("portal_2_projectile_ball",PATTACH_ABSORIGIN_FOLLOW,self,1)
-else
-	ParticleEffectAttach("portal_2_projectile_ball_pbody",PATTACH_ABSORIGIN_FOLLOW,self,1)
-end
+			if owner:IsValid() then
+				iPortalColor1 = owner:GetInfoNum("portal_color_1", 7)
+				iPortalColor2 = owner:GetInfoNum("portal_color_2", 1)
+			end
+		end
+
+		self:SetColor1(iPortalColor1)
+		self:SetColor2(iPortalColor2)
+
+		if not useInstant:GetBool() then
+			if type == TYPE_BLUE then
+				local formatStr = SWITCH_PARTICLE_FORMATSTR[iPortalColor1] or SWITCH_PARTICLE_FORMATSTR[0]
+
+				ParticleEffectAttach(string.format(formatStr, "ball"), PATTACH_ABSORIGIN_FOLLOW, self, 1)
+			elseif type == TYPE_ORANGE then
+				local formatStr = SWITCH_PARTICLE_FORMATSTR[iPortalColor2] or SWITCH_PARTICLE_FORMATSTR[0]
+
+				ParticleEffectAttach(string.format(formatStr, "ball"), PATTACH_ABSORIGIN_FOLLOW, self, 1)
+			end
+		end
+
+		if type == TYPE_BLUE then
+			local formatStr = SWITCH_PARTICLE_FORMATSTR[iPortalColor1] or SWITCH_PARTICLE_FORMATSTR[0]
+
+			ParticleEffectAttach(string.format(formatStr, "fiber"), PATTACH_ABSORIGIN_FOLLOW, self, 1)
 		elseif type == TYPE_ORANGE then
-if GetConVarNumber("portal_color_2") >=14 then
-	ParticleEffectAttach("portal_gray_projectile_ball",PATTACH_ABSORIGIN_FOLLOW,self,1)
-elseif GetConVarNumber("portal_color_2") >=13 then
-	ParticleEffectAttach("portal_gray_projectile_ball",PATTACH_ABSORIGIN_FOLLOW,self,1)
-elseif GetConVarNumber("portal_color_2") >=12 then
-	ParticleEffectAttach("portal_gray_projectile_ball",PATTACH_ABSORIGIN_FOLLOW,self,1)
-elseif GetConVarNumber("portal_color_2") >=11 then
-	ParticleEffectAttach("portal_2_projectile_ball_pbody",PATTACH_ABSORIGIN_FOLLOW,self,1)
-elseif GetConVarNumber("portal_color_2") >=10 then
-	ParticleEffectAttach("portal_2_projectile_ball_pink_green",PATTACH_ABSORIGIN_FOLLOW,self,1)
-elseif GetConVarNumber("portal_color_2") >=9 then
-	ParticleEffectAttach("portal_2_projectile_ball_pink_green",PATTACH_ABSORIGIN_FOLLOW,self,1)
-elseif GetConVarNumber("portal_color_2") >=8 then
-	ParticleEffectAttach("portal_2_projectile_ball_atlas",PATTACH_ABSORIGIN_FOLLOW,self,1)
-elseif GetConVarNumber("portal_color_2") >=7 then
-	ParticleEffectAttach("portal_1_projectile_ball",PATTACH_ABSORIGIN_FOLLOW,self,1)
-elseif GetConVarNumber("portal_color_2") >=6 then
-	ParticleEffectAttach("portal_1_projectile_ball_atlas",PATTACH_ABSORIGIN_FOLLOW,self,1)
-elseif GetConVarNumber("portal_color_2") >=5 then
-	ParticleEffectAttach("portal_1_projectile_ball_pink_green",PATTACH_ABSORIGIN_FOLLOW,self,1)
-elseif GetConVarNumber("portal_color_2") >=4 then
-	ParticleEffectAttach("portal_1_projectile_ball_pink_green",PATTACH_ABSORIGIN_FOLLOW,self,1)
-elseif GetConVarNumber("portal_color_2") >=3 then
-	ParticleEffectAttach("portal_1_projectile_ball_pink_green",PATTACH_ABSORIGIN_FOLLOW,self,1)
-elseif GetConVarNumber("portal_color_2") >=2 then
-	ParticleEffectAttach("portal_1_projectile_ball_pbody",PATTACH_ABSORIGIN_FOLLOW,self,1)
-elseif GetConVarNumber("portal_color_2") >=1 then
-	ParticleEffectAttach("portal_2_projectile_ball",PATTACH_ABSORIGIN_FOLLOW,self,1)
-else
-	ParticleEffectAttach("portal_2_projectile_ball_pbody",PATTACH_ABSORIGIN_FOLLOW,self,1)
-end
-	end
+			local formatStr = SWITCH_PARTICLE_FORMATSTR[iPortalColor2] or SWITCH_PARTICLE_FORMATSTR[0]
 
-end
-	
-	if type == TYPE_BLUE then
-if GetConVarNumber("portal_color_1") >=14 then
-	ParticleEffectAttach("portal_gray_projectile_fiber",PATTACH_ABSORIGIN_FOLLOW,self,1)
-elseif GetConVarNumber("portal_color_1") >=13 then
-	ParticleEffectAttach("portal_gray_projectile_fiber",PATTACH_ABSORIGIN_FOLLOW,self,1)
-elseif GetConVarNumber("portal_color_1") >=12 then
-	ParticleEffectAttach("portal_gray_projectile_fiber",PATTACH_ABSORIGIN_FOLLOW,self,1)
-elseif GetConVarNumber("portal_color_1") >=11 then
-	ParticleEffectAttach("portal_2_projectile_fiber_pbody",PATTACH_ABSORIGIN_FOLLOW,self,1)
-elseif GetConVarNumber("portal_color_1") >=10 then
-	ParticleEffectAttach("portal_2_projectile_fiber_pink_green",PATTACH_ABSORIGIN_FOLLOW,self,1)
-elseif GetConVarNumber("portal_color_1") >=9 then
-	ParticleEffectAttach("portal_2_projectile_fiber_pink_green",PATTACH_ABSORIGIN_FOLLOW,self,1)
-elseif GetConVarNumber("portal_color_1") >=8 then
-	ParticleEffectAttach("portal_2_projectile_fiber_atlas",PATTACH_ABSORIGIN_FOLLOW,self,1)
-elseif GetConVarNumber("portal_color_1") >=7 then
-	ParticleEffectAttach("portal_1_projectile_fiber",PATTACH_ABSORIGIN_FOLLOW,self,1)
-elseif GetConVarNumber("portal_color_1") >=6 then
-	ParticleEffectAttach("portal_1_projectile_fiber_atlas",PATTACH_ABSORIGIN_FOLLOW,self,1)
-elseif GetConVarNumber("portal_color_1") >=5 then
-	ParticleEffectAttach("portal_1_projectile_fiber_pink_green",PATTACH_ABSORIGIN_FOLLOW,self,1)
-elseif GetConVarNumber("portal_color_1") >=4 then
-	ParticleEffectAttach("portal_1_projectile_fiber_pink_green",PATTACH_ABSORIGIN_FOLLOW,self,1)
-elseif GetConVarNumber("portal_color_1") >=3 then
-	ParticleEffectAttach("portal_1_projectile_fiber_pink_green",PATTACH_ABSORIGIN_FOLLOW,self,1)
-elseif GetConVarNumber("portal_color_1") >=2 then
-	ParticleEffectAttach("portal_1_projectile_fiber_pbody",PATTACH_ABSORIGIN_FOLLOW,self,1)
-elseif GetConVarNumber("portal_color_1") >=1 then
-	ParticleEffectAttach("portal_2_projectile_fiber",PATTACH_ABSORIGIN_FOLLOW,self,1)
-else
-	ParticleEffectAttach("portal_2_projectile_fiber_pbody",PATTACH_ABSORIGIN_FOLLOW,self,1)
-end
-		elseif type == TYPE_ORANGE then
-if GetConVarNumber("portal_color_2") >=14 then
-	ParticleEffectAttach("portal_gray_projectile_fiber",PATTACH_ABSORIGIN_FOLLOW,self,1)
-elseif GetConVarNumber("portal_color_2") >=13 then
-	ParticleEffectAttach("portal_gray_projectile_fiber",PATTACH_ABSORIGIN_FOLLOW,self,1)
-elseif GetConVarNumber("portal_color_2") >=12 then
-	ParticleEffectAttach("portal_gray_projectile_fiber",PATTACH_ABSORIGIN_FOLLOW,self,1)
-elseif GetConVarNumber("portal_color_2") >=11 then
-	ParticleEffectAttach("portal_2_projectile_fiber_pbody",PATTACH_ABSORIGIN_FOLLOW,self,1)
-elseif GetConVarNumber("portal_color_2") >=10 then
-	ParticleEffectAttach("portal_2_projectile_fiber_pink_green",PATTACH_ABSORIGIN_FOLLOW,self,1)
-elseif GetConVarNumber("portal_color_2") >=9 then
-	ParticleEffectAttach("portal_2_projectile_fiber_pink_green",PATTACH_ABSORIGIN_FOLLOW,self,1)
-elseif GetConVarNumber("portal_color_2") >=8 then
-	ParticleEffectAttach("portal_2_projectile_fiber_atlas",PATTACH_ABSORIGIN_FOLLOW,self,1)
-elseif GetConVarNumber("portal_color_2") >=7 then
-	ParticleEffectAttach("portal_1_projectile_fiber",PATTACH_ABSORIGIN_FOLLOW,self,1)
-elseif GetConVarNumber("portal_color_2") >=6 then
-	ParticleEffectAttach("portal_1_projectile_fiber_atlas",PATTACH_ABSORIGIN_FOLLOW,self,1)
-elseif GetConVarNumber("portal_color_2") >=5 then
-	ParticleEffectAttach("portal_1_projectile_fiber_pink_green",PATTACH_ABSORIGIN_FOLLOW,self,1)
-elseif GetConVarNumber("portal_color_2") >=4 then
-	ParticleEffectAttach("portal_1_projectile_fiber_pink_green",PATTACH_ABSORIGIN_FOLLOW,self,1)
-elseif GetConVarNumber("portal_color_2") >=3 then
-	ParticleEffectAttach("portal_1_projectile_fiber_pink_green",PATTACH_ABSORIGIN_FOLLOW,self,1)
-elseif GetConVarNumber("portal_color_2") >=2 then
-	ParticleEffectAttach("portal_1_projectile_fiber_pbody",PATTACH_ABSORIGIN_FOLLOW,self,1)
-elseif GetConVarNumber("portal_color_2") >=1 then
-	ParticleEffectAttach("portal_2_projectile_fiber",PATTACH_ABSORIGIN_FOLLOW,self,1)
-else
-	ParticleEffectAttach("portal_2_projectile_fiber_pbody",PATTACH_ABSORIGIN_FOLLOW,self,1)
-end
-	end
+			ParticleEffectAttach(string.format(formatStr, "fiber"), PATTACH_ABSORIGIN_FOLLOW, self, 1)
+		end
 	end
 end
 
-function ENT:GetKind(kind)
-	return self:GetNWInt("Kind", TYPE_BLUE)
-end
 function ENT:SetGun(ent)
-	self.gun = ent
-end
-function ENT:GetGun()
-	return self.gun
+	self:SetWeapon(ent)
 end
 
-function ENT:PhysicsCollide(data,phy)
-	-- self.Entity:Remove()
+function ENT:GetGun()
+	return self:GetWeapon()
+end
+
+function ENT:PhysicsCollide(data, phy)
+	-- self:Remove()
 	-- print("Create Portal!")
 end
 
-
 function ENT:Draw()
-
+	--self:DrawModel()
 end
