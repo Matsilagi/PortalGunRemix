@@ -1,0 +1,26 @@
+"VertexLitGeneric"
+{
+	"$basetexture"				"models\weapons\portalgun_hd\bump"
+	"$bumpmap"					"models\weapons\portalgun_hd\bump_normal"
+	"$phongwarptexture"			"models\weapons\portalgun_hd\phongwarp_sharp"
+	"$color2"					"[0.05 0.05 0.05]"
+	"$additive"					"1"
+
+	"$envmap"					"env_cubemap"
+	"$envmapfresnel"			"1"
+	"$envmaptint"				"[ .01 .02 .03 ]"
+
+	"$phong"					"1"
+	"$phongexponent"			"10"
+	"$phongboost"				".8"
+	"$phongfresnelranges"		"[1 3 6]"
+
+	"$rimlight"					"1"
+	"$rimlightexponent"			"33"
+	"$rimlightboost"			".1"
+	"$rimmask"					"1"
+
+//	"$nocull"					"1"
+}
+//Material setup by ShadowRUN 幸運な. 
+//Do NOT edit\modify\redistribute these materials without my explicit permission.

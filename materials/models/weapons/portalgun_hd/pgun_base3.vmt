@@ -1,0 +1,23 @@
+"VertexLitGeneric"
+{
+	"$basetexture"				"models/weapons/portalgun_hd/portal_gun_d_o"
+	"$bumpmap"					"models/weapons/portalgun_hd/portal_gun_n"
+	"$phongexponenttexture"		"models/weapons/portalgun_hd/portal_gun_e"
+	"$phongwarptexture"			"models/weapons/portalgun_hd/phongwarp_metal_marv"
+
+	"$envmap"					"env_cubemap"
+	"$envmapfresnel"			".5"
+	"$envmaptint"				"[ .06 .06 .06 ]"
+
+	"$phong"					"1"
+	"$phongboost"				"30"
+	"$phongfresnelranges"		"[0.32 0.72 0.99]"
+	"$phongalbedotint" 			"1"
+
+	"$rimlight"					"1"
+	"$rimlightexponent"			"80"
+	"$rimlightboost"			"7"
+	"$rimmask"					"1"
+}
+//Material setup by ShadowRUN 幸運な. 
+//Do NOT edit\modify\redistribute these materials without my explicit permission.
