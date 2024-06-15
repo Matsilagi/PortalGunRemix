@@ -1,4 +1,4 @@
-AddCSLuaFile("shared.lua")
+AddCSLuaFile()
 
 ENT.Type = "anim"
 ENT.Base = "base_anim"
