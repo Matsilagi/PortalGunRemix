@@ -29,7 +29,9 @@ function ENT:Think( )
 	self.Portal = self:GetPortal()
 
 	if CLIENT then return end
-	
+
+	self:SetLightingOriginEntity(ent)
+
 	local portal = self.Portal
 
 	if not ent.InPortal then
@@ -54,7 +56,13 @@ function ENT:Think( )
 
 	self:SetPos(origin)
 	self:SetAngles(angs)
-	
+end
+
+function ENT:GetPlayerColor()
+	local ent = self:GetEnt()
+	if ent:IsValid() and ent:IsPlayer() then
+		return ent:GetPlayerColor()
+	end
 end
 
 function ENT:Draw()
@@ -115,8 +123,16 @@ function ENT:Draw()
 		local normal = portal:GetForward()
 		local distance = normal:Dot( portal:GetRenderOrigin() )
 		self:SetRenderClipPlane(normal,distance)
-		
-		self:DrawModel()
-		
+
+		local othernormal = portal:GetOther():GetForward()
+		local otherdistance = othernormal:Dot( portal:GetOther():GetRenderOrigin() )
+
+		local b = render.EnableClipping(true)
+			render.PushCustomClipPlane( othernormal, otherdistance )
+
+			self:DrawModel()
+
+			render.PopCustomClipPlane()
+		render.EnableClipping(b)
 	end
 end
