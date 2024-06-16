@@ -1,13 +1,13 @@
 TYPE_BLUE = 1
 TYPE_ORANGE = 2
 
-ENT.Type = "anim";
+ENT.Type = "anim"
 
-ENT.PrintName = "Portal";
-ENT.Author = "CnicK / Bobblehead";
-ENT.Contact = "";
-ENT.Purpose = "A portal";
-ENT.Instructions = "Spawn portals. Look through portals. Enter portals!";
+ENT.PrintName = "Portal"
+ENT.Author = "CnicK / Bobblehead"
+ENT.Contact = ""
+ENT.Purpose = "A portal"
+ENT.Instructions = "Spawn portals. Look through portals. Enter portals!"
 
 ENT.RenderGroup = RENDERGROUP_BOTH
 
@@ -29,11 +29,10 @@ function Plymeta:GetHeadPos(v)
 end
 
 local function IsBehind( posA, posB, normal )
+	local Vec1 = ( posB - posA )
+	Vec1:Normalize()
 
-	local Vec1 = ( posB - posA ):GetNormalized()
-
-	return ( normal:Dot( Vec1 ) < 0 )
-
+	return normal:Dot( Vec1 ) < 0
 end
 
 
@@ -44,28 +43,28 @@ end
 
 function ENT:GetPortalAngleOffsets(portal,ent)
 	local angles = ent:GetAngles()
-	
+
 	local normal = self:GetForward()
 	local forward = angles:Forward()
 	local up = angles:Up()
-	
-	// reflect forward
+
+	-- reflect forward
 	local dot = forward:DotProduct( normal )
 	forward = forward + ( -2 * dot ) * normal
-	
-	// reflect up		
+
+	-- reflect up		
 	local dot = up:DotProduct( normal )
 	up = up + ( -2 * dot ) * normal
-	
-	// convert to angles
-	angles = math.VectorAngles( forward, up );
-	
-	local LocalAngles = self:WorldToLocalAngles( angles );
-	
-	// repair
-	LocalAngles.y = -LocalAngles.y;
-	LocalAngles.r = -LocalAngles.r;
-	
+
+	-- convert to angles
+	angles = math.VectorAngles( forward, up )
+
+	local LocalAngles = self:WorldToLocalAngles( angles )
+
+	-- repair
+	LocalAngles.y = -LocalAngles.y
+	LocalAngles.r = -LocalAngles.r
+
 	return portal:LocalToWorldAngles( LocalAngles )
 end
 
@@ -78,11 +77,11 @@ function ENT:GetPortalPosOffsets(portal,ent)
 	end
 	local offset = self:WorldToLocal(pos)
 	if ent:IsPlayer() then 
-		offset.x = -offset.x;
-		offset.y = -offset.y;
+		offset.x = -offset.x
+		offset.y = -offset.y
 	else 
-		offset.x = -offset.x;
-		offset.y = -offset.y;
+		offset.x = -offset.x
+		offset.y = -offset.y
 	end
 	
 	local output = portal:LocalToWorld( offset )
@@ -126,7 +125,7 @@ function ENT:PlayerWithinBounds(ent,predicting)
 		Player's feet and head must be in the portal to enter.
 		portal dimensions: 64 wide, 104 tall]]
 		
-		//must be in the portal.
+		--must be in the portal.
 		
 		
 		if headPos.z > 52 then return false end
@@ -138,7 +137,7 @@ function ENT:PlayerWithinBounds(ent,predicting)
 		if plyPos.y < -17 then return false end
 		-- print("Right is in x")
 	else
-		//must be in the portal.
+		--must be in the portal.
 		
 		if plyPos.z > 44 then return false end
 		if plyPos.z < -44 then return false end
@@ -152,7 +151,7 @@ end
 function ENT:SetType( int )
 	self:SetNWInt("Potal:PortalType",int)
 	self.PortalType = int
-	
+
 	if self.Activated == true then
 		if SERVER then
 			self:SetUpEffects(int)
@@ -169,156 +168,157 @@ function ENT:GetOther()
 end
 
 function ENT:SetUpEffects(int)
-
 	local ang = self:GetAngles()
 	ang:RotateAroundAxis(ang:Right(),-90)
 	ang:RotateAroundAxis(ang:Forward(),0)
 	ang:RotateAroundAxis(ang:Up(),90)
-	
+
 	local pos = self:GetPos()
 	if self:OnFloor() then pos.z = pos.z - 20 end
 
 	local ent = ents.Create( "info_particle_system" )
 	ent:SetPos(pos)
 	ent:SetAngles(ang)
+
 	if int == TYPE_BLUE then
-if GetConVarNumber("portal_color_1") >=14 then
-	ent:SetKeyValue( "effect_name", "portal_gray_edge")
-elseif GetConVarNumber("portal_color_1") >=13 then
-	ent:SetKeyValue( "effect_name", "portal_gray_edge")
-elseif GetConVarNumber("portal_color_1") >=12 then
-	ent:SetKeyValue( "effect_name", "portal_gray_edge")
-elseif GetConVarNumber("portal_color_1") >=11 then
-	ent:SetKeyValue( "effect_name", "portal_1_edge_pbody_reverse")
-elseif GetConVarNumber("portal_color_1") >=10 then
-	ent:SetKeyValue( "effect_name", "portal_1_edge_pink_green_reverse")
-elseif GetConVarNumber("portal_color_1") >=9 then
-	ent:SetKeyValue( "effect_name", "portal_1_edge_pink_green_reverse")
-elseif GetConVarNumber("portal_color_1") >=8 then
-	ent:SetKeyValue( "effect_name", "portal_1_edge_atlas_reverse")
-elseif GetConVarNumber("portal_color_1") >=7 then
-	ent:SetKeyValue( "effect_name", "portal_1_edge")
-elseif GetConVarNumber("portal_color_1") >=6 then
-	ent:SetKeyValue( "effect_name", "portal_1_edge_atlas")
-elseif GetConVarNumber("portal_color_1") >=5 then
-	ent:SetKeyValue( "effect_name", "portal_1_edge_pink_green")
-elseif GetConVarNumber("portal_color_1") >=4 then
-	ent:SetKeyValue( "effect_name", "portal_1_edge_pink_green")
-elseif GetConVarNumber("portal_color_1") >=3 then
-	ent:SetKeyValue( "effect_name", "portal_1_edge_pink_green")
-elseif GetConVarNumber("portal_color_1") >=2 then
-	ent:SetKeyValue( "effect_name", "portal_1_edge_pbody")
-elseif GetConVarNumber("portal_color_1") >=1 then
-	ent:SetKeyValue( "effect_name", "portal_1_edge_reverse")
-else
-	ent:SetKeyValue( "effect_name", "portal_1_edge_pbody_reverse")
-end
+		if GetConVarNumber("portal_color_1") >=14 then
+			ent:SetKeyValue( "effect_name", "portal_gray_edge")
+		elseif GetConVarNumber("portal_color_1") >=13 then
+			ent:SetKeyValue( "effect_name", "portal_gray_edge")
+		elseif GetConVarNumber("portal_color_1") >=12 then
+			ent:SetKeyValue( "effect_name", "portal_gray_edge")
+		elseif GetConVarNumber("portal_color_1") >=11 then
+			ent:SetKeyValue( "effect_name", "portal_1_edge_pbody_reverse")
+		elseif GetConVarNumber("portal_color_1") >=10 then
+			ent:SetKeyValue( "effect_name", "portal_1_edge_pink_green_reverse")
+		elseif GetConVarNumber("portal_color_1") >=9 then
+			ent:SetKeyValue( "effect_name", "portal_1_edge_pink_green_reverse")
+		elseif GetConVarNumber("portal_color_1") >=8 then
+			ent:SetKeyValue( "effect_name", "portal_1_edge_atlas_reverse")
+		elseif GetConVarNumber("portal_color_1") >=7 then
+			ent:SetKeyValue( "effect_name", "portal_1_edge")
+		elseif GetConVarNumber("portal_color_1") >=6 then
+			ent:SetKeyValue( "effect_name", "portal_1_edge_atlas")
+		elseif GetConVarNumber("portal_color_1") >=5 then
+			ent:SetKeyValue( "effect_name", "portal_1_edge_pink_green")
+		elseif GetConVarNumber("portal_color_1") >=4 then
+			ent:SetKeyValue( "effect_name", "portal_1_edge_pink_green")
+		elseif GetConVarNumber("portal_color_1") >=3 then
+			ent:SetKeyValue( "effect_name", "portal_1_edge_pink_green")
+		elseif GetConVarNumber("portal_color_1") >=2 then
+			ent:SetKeyValue( "effect_name", "portal_1_edge_pbody")
+		elseif GetConVarNumber("portal_color_1") >=1 then
+			ent:SetKeyValue( "effect_name", "portal_1_edge_reverse")
+		else
+			ent:SetKeyValue( "effect_name", "portal_1_edge_pbody_reverse")
+		end
 	elseif int == TYPE_ORANGE then
-if GetConVarNumber("portal_color_2") >=14 then
-	ent:SetKeyValue( "effect_name", "portal_gray_edge_reverse")
-elseif GetConVarNumber("portal_color_2") >=13 then
-	ent:SetKeyValue( "effect_name", "portal_gray_edge_reverse")
-elseif GetConVarNumber("portal_color_2") >=12 then
-	ent:SetKeyValue( "effect_name", "portal_gray_edge_reverse")
-elseif GetConVarNumber("portal_color_2") >=11 then
-	ent:SetKeyValue( "effect_name", "portal_2_edge_pbody")
-elseif GetConVarNumber("portal_color_2") >=10 then
-	ent:SetKeyValue( "effect_name", "portal_2_edge_pink_green")
-elseif GetConVarNumber("portal_color_2") >=9 then
-	ent:SetKeyValue( "effect_name", "portal_2_edge_pink_green")
-elseif GetConVarNumber("portal_color_2") >=8 then
-	ent:SetKeyValue( "effect_name", "portal_2_edge_atlas")
-elseif GetConVarNumber("portal_color_2") >=7 then
-	ent:SetKeyValue( "effect_name", "portal_2_edge_reverse")
-elseif GetConVarNumber("portal_color_2") >=6 then
-	ent:SetKeyValue( "effect_name", "portal_2_edge_atlas_reverse")
-elseif GetConVarNumber("portal_color_2") >=5 then
-	ent:SetKeyValue( "effect_name", "portal_1_edge_pink_green")
-elseif GetConVarNumber("portal_color_2") >=4 then
-	ent:SetKeyValue( "effect_name", "portal_1_edge_pink_green")
-elseif GetConVarNumber("portal_color_2") >=3 then
-	ent:SetKeyValue( "effect_name", "portal_1_edge_pink_green")
-elseif GetConVarNumber("portal_color_2") >=2 then
-	ent:SetKeyValue( "effect_name", "portal_2_edge_pbody_reverse")
-elseif GetConVarNumber("portal_color_2") >=1 then
-	ent:SetKeyValue( "effect_name", "portal_2_edge")
-else
-	ent:SetKeyValue( "effect_name", "portal_2_edge_pbody")
-end
+		if GetConVarNumber("portal_color_2") >=14 then
+			ent:SetKeyValue( "effect_name", "portal_gray_edge_reverse")
+		elseif GetConVarNumber("portal_color_2") >=13 then
+			ent:SetKeyValue( "effect_name", "portal_gray_edge_reverse")
+		elseif GetConVarNumber("portal_color_2") >=12 then
+			ent:SetKeyValue( "effect_name", "portal_gray_edge_reverse")
+		elseif GetConVarNumber("portal_color_2") >=11 then
+			ent:SetKeyValue( "effect_name", "portal_2_edge_pbody")
+		elseif GetConVarNumber("portal_color_2") >=10 then
+			ent:SetKeyValue( "effect_name", "portal_2_edge_pink_green")
+		elseif GetConVarNumber("portal_color_2") >=9 then
+			ent:SetKeyValue( "effect_name", "portal_2_edge_pink_green")
+		elseif GetConVarNumber("portal_color_2") >=8 then
+			ent:SetKeyValue( "effect_name", "portal_2_edge_atlas")
+		elseif GetConVarNumber("portal_color_2") >=7 then
+			ent:SetKeyValue( "effect_name", "portal_2_edge_reverse")
+		elseif GetConVarNumber("portal_color_2") >=6 then
+			ent:SetKeyValue( "effect_name", "portal_2_edge_atlas_reverse")
+		elseif GetConVarNumber("portal_color_2") >=5 then
+			ent:SetKeyValue( "effect_name", "portal_1_edge_pink_green")
+		elseif GetConVarNumber("portal_color_2") >=4 then
+			ent:SetKeyValue( "effect_name", "portal_1_edge_pink_green")
+		elseif GetConVarNumber("portal_color_2") >=3 then
+			ent:SetKeyValue( "effect_name", "portal_1_edge_pink_green")
+		elseif GetConVarNumber("portal_color_2") >=2 then
+			ent:SetKeyValue( "effect_name", "portal_2_edge_pbody_reverse")
+		elseif GetConVarNumber("portal_color_2") >=1 then
+			ent:SetKeyValue( "effect_name", "portal_2_edge")
+		else
+			ent:SetKeyValue( "effect_name", "portal_2_edge_pbody")
+		end
 	end
+
 	ent:SetKeyValue( "start_active", "1")
 	ent:Spawn()
 	ent:Activate()
 	ent:SetParent(self)
 	self.EdgeEffect = ent
-	
+
 	local ent = ents.Create( "info_particle_system" )
 	ent:SetPos(pos)
 	ent:SetAngles(ang)
 	if int == TYPE_BLUE then
-if GetConVarNumber("portal_color_1") >=14 then
-	ent:SetKeyValue( "effect_name", "portal_gray_vacuum")
-elseif GetConVarNumber("portal_color_1") >=13 then
-	ent:SetKeyValue( "effect_name", "portal_gray_vacuum")
-elseif GetConVarNumber("portal_color_1") >=12 then
-	ent:SetKeyValue( "effect_name", "portal_gray_vacuum")
-elseif GetConVarNumber("portal_color_1") >=11 then
-	ent:SetKeyValue( "effect_name", "portal_2_vacuum_pink_green")
-elseif GetConVarNumber("portal_color_1") >=10 then
-	ent:SetKeyValue( "effect_name", "portal_2_vacuum_pink_green")
-elseif GetConVarNumber("portal_color_1") >=9 then
-	ent:SetKeyValue( "effect_name", "portal_2_vacuum_pink_green")
-elseif GetConVarNumber("portal_color_1") >=8 then
-	ent:SetKeyValue( "effect_name", "portal_2_vacuum_atlas")
-elseif GetConVarNumber("portal_color_1") >=7 then
-	ent:SetKeyValue( "effect_name", "portal_1_vacuum")
-elseif GetConVarNumber("portal_color_1") >=6 then
-	ent:SetKeyValue( "effect_name", "portal_1_vacuum_atlas")
-elseif GetConVarNumber("portal_color_1") >=5 then
-	ent:SetKeyValue( "effect_name", "portal_1_vacuum_pink_green")
-elseif GetConVarNumber("portal_color_1") >=4 then
-	ent:SetKeyValue( "effect_name", "portal_1_vacuum_pink_green")
-elseif GetConVarNumber("portal_color_1") >=3 then
-	ent:SetKeyValue( "effect_name", "portal_1_vacuum_pink_green")
-elseif GetConVarNumber("portal_color_1") >=2 then
-	ent:SetKeyValue( "effect_name", "portal_1_vacuum_pbody")
-elseif GetConVarNumber("portal_color_1") >=1 then
-	ent:SetKeyValue( "effect_name", "portal_2_vacuum")
-else
-	ent:SetKeyValue( "effect_name", "portal_2_vacuum_pbody")
-end
+		if GetConVarNumber("portal_color_1") >=14 then
+			ent:SetKeyValue( "effect_name", "portal_gray_vacuum")
+		elseif GetConVarNumber("portal_color_1") >=13 then
+			ent:SetKeyValue( "effect_name", "portal_gray_vacuum")
+		elseif GetConVarNumber("portal_color_1") >=12 then
+			ent:SetKeyValue( "effect_name", "portal_gray_vacuum")
+		elseif GetConVarNumber("portal_color_1") >=11 then
+			ent:SetKeyValue( "effect_name", "portal_2_vacuum_pink_green")
+		elseif GetConVarNumber("portal_color_1") >=10 then
+			ent:SetKeyValue( "effect_name", "portal_2_vacuum_pink_green")
+		elseif GetConVarNumber("portal_color_1") >=9 then
+			ent:SetKeyValue( "effect_name", "portal_2_vacuum_pink_green")
+		elseif GetConVarNumber("portal_color_1") >=8 then
+			ent:SetKeyValue( "effect_name", "portal_2_vacuum_atlas")
+		elseif GetConVarNumber("portal_color_1") >=7 then
+			ent:SetKeyValue( "effect_name", "portal_1_vacuum")
+		elseif GetConVarNumber("portal_color_1") >=6 then
+			ent:SetKeyValue( "effect_name", "portal_1_vacuum_atlas")
+		elseif GetConVarNumber("portal_color_1") >=5 then
+			ent:SetKeyValue( "effect_name", "portal_1_vacuum_pink_green")
+		elseif GetConVarNumber("portal_color_1") >=4 then
+			ent:SetKeyValue( "effect_name", "portal_1_vacuum_pink_green")
+		elseif GetConVarNumber("portal_color_1") >=3 then
+			ent:SetKeyValue( "effect_name", "portal_1_vacuum_pink_green")
+		elseif GetConVarNumber("portal_color_1") >=2 then
+			ent:SetKeyValue( "effect_name", "portal_1_vacuum_pbody")
+		elseif GetConVarNumber("portal_color_1") >=1 then
+			ent:SetKeyValue( "effect_name", "portal_2_vacuum")
+		else
+			ent:SetKeyValue( "effect_name", "portal_2_vacuum_pbody")
+		end
 	elseif int == TYPE_ORANGE then
-if GetConVarNumber("portal_color_2") >=14 then
-	ent:SetKeyValue( "effect_name", "portal_gray_vacuum")
-elseif GetConVarNumber("portal_color_2") >=13 then
-	ent:SetKeyValue( "effect_name", "portal_gray_vacuum")
-elseif GetConVarNumber("portal_color_2") >=12 then
-	ent:SetKeyValue( "effect_name", "portal_gray_vacuum")
-elseif GetConVarNumber("portal_color_2") >=11 then
-	ent:SetKeyValue( "effect_name", "portal_2_vacuum_pink_green")
-elseif GetConVarNumber("portal_color_2") >=10 then
-	ent:SetKeyValue( "effect_name", "portal_2_vacuum_pink_green")
-elseif GetConVarNumber("portal_color_2") >=9 then
-	ent:SetKeyValue( "effect_name", "portal_2_vacuum_pink_green")
-elseif GetConVarNumber("portal_color_2") >=8 then
-	ent:SetKeyValue( "effect_name", "portal_2_vacuum_atlas")
-elseif GetConVarNumber("portal_color_2") >=7 then
-	ent:SetKeyValue( "effect_name", "portal_1_vacuum")
-elseif GetConVarNumber("portal_color_2") >=6 then
-	ent:SetKeyValue( "effect_name", "portal_1_vacuum_atlas")
-elseif GetConVarNumber("portal_color_2") >=5 then
-	ent:SetKeyValue( "effect_name", "portal_1_vacuum_pink_green")
-elseif GetConVarNumber("portal_color_2") >=4 then
-	ent:SetKeyValue( "effect_name", "portal_1_vacuum_pink_green")
-elseif GetConVarNumber("portal_color_2") >=3 then
-	ent:SetKeyValue( "effect_name", "portal_1_vacuum_pink_green")
-elseif GetConVarNumber("portal_color_2") >=2 then
-	ent:SetKeyValue( "effect_name", "portal_1_vacuum_pbody")
-elseif GetConVarNumber("portal_color_2") >=1 then
-	ent:SetKeyValue( "effect_name", "portal_2_vacuum")
-else
-	ent:SetKeyValue( "effect_name", "portal_2_vacuum_pbody")
-end
+		if GetConVarNumber("portal_color_2") >=14 then
+			ent:SetKeyValue( "effect_name", "portal_gray_vacuum")
+		elseif GetConVarNumber("portal_color_2") >=13 then
+			ent:SetKeyValue( "effect_name", "portal_gray_vacuum")
+		elseif GetConVarNumber("portal_color_2") >=12 then
+			ent:SetKeyValue( "effect_name", "portal_gray_vacuum")
+		elseif GetConVarNumber("portal_color_2") >=11 then
+			ent:SetKeyValue( "effect_name", "portal_2_vacuum_pink_green")
+		elseif GetConVarNumber("portal_color_2") >=10 then
+			ent:SetKeyValue( "effect_name", "portal_2_vacuum_pink_green")
+		elseif GetConVarNumber("portal_color_2") >=9 then
+			ent:SetKeyValue( "effect_name", "portal_2_vacuum_pink_green")
+		elseif GetConVarNumber("portal_color_2") >=8 then
+			ent:SetKeyValue( "effect_name", "portal_2_vacuum_atlas")
+		elseif GetConVarNumber("portal_color_2") >=7 then
+			ent:SetKeyValue( "effect_name", "portal_1_vacuum")
+		elseif GetConVarNumber("portal_color_2") >=6 then
+			ent:SetKeyValue( "effect_name", "portal_1_vacuum_atlas")
+		elseif GetConVarNumber("portal_color_2") >=5 then
+			ent:SetKeyValue( "effect_name", "portal_1_vacuum_pink_green")
+		elseif GetConVarNumber("portal_color_2") >=4 then
+			ent:SetKeyValue( "effect_name", "portal_1_vacuum_pink_green")
+		elseif GetConVarNumber("portal_color_2") >=3 then
+			ent:SetKeyValue( "effect_name", "portal_1_vacuum_pink_green")
+		elseif GetConVarNumber("portal_color_2") >=2 then
+			ent:SetKeyValue( "effect_name", "portal_1_vacuum_pbody")
+		elseif GetConVarNumber("portal_color_2") >=1 then
+			ent:SetKeyValue( "effect_name", "portal_2_vacuum")
+		else
+			ent:SetKeyValue( "effect_name", "portal_2_vacuum_pbody")
+		end
 	end
 	ent:SetKeyValue( "start_active", "1")
 	ent:Spawn()

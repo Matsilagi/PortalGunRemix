@@ -1,9 +1,8 @@
 local function PortalMenuSettings( pnl )
-
 	pnl:AddControl( "CheckBox", { Label = "Old Carrying Animation", Command = "portal_carryanim_p1" } )
 	pnl:AddControl( "CheckBox", { Label = "Change the sound effect of the Portal Gun", Command = "portal_sound" } )
 	pnl:AddControl( "CheckBox", { Label = "Enable Arms", Command = "portal_arm" } )
-	
+
 	pnl:ControlHelp( "Details of the reticle" ):DockMargin( 16, 16, 16, 4 )
 	pnl:AddControl( "Slider", { Label = "Type Crosshair", Type = "Integer", Command = "portal_crosshair", Min = "0", Max = "2" } )
 	pnl:AddControl( "CheckBox", { Label = "Presence System", Command = "portal_crosshair_system" } )
@@ -11,7 +10,7 @@ local function PortalMenuSettings( pnl )
 	pnl:ControlHelp( "Portals details" ):DockMargin( 16, 16, 16, 4 )
 	pnl:AddControl( "CheckBox", { Label = "Enable Lights", Command = "portal_dynamic_light" } )
 	pnl:AddControl( "CheckBox", { Label = "Enable Render", Command = "portal_render" } )
-	
+
 	pnl:ControlHelp( "When you shoot a portals" ):DockMargin( 16, 16, 16, 4 )
 	pnl:AddControl( "Slider", { Label = "Projectile Speed", Type = "Integer", Command = "portal_projectile_speed", Min = "100", Max = "10000" } )
 	pnl:AddControl( "CheckBox", { Label = "Enable Projectile Ball", Command = "portal_projectile_ball" } )
@@ -19,7 +18,7 @@ local function PortalMenuSettings( pnl )
 	pnl:AddControl( "ListBox", { Label = "Upgrade", Options = list.Get( "list_portalonly" ) } )
 	pnl:AddControl( "CheckBox", { Label = "Portals Cleanings", Command = "portal_cleanportals" } )
 	pnl:AddControl( "CheckBox", { Label = "Shoot Faster", Command = "portal_tryhard" } )
-	
+
 	pnl:ControlHelp( "Other Parameters" ):DockMargin( 16, 16, 16, 4 )
 	pnl:AddControl( "Slider", { Label = "Velocity on the Ceiling", Type = "Integer", Command = "portal_velocity_roof", Min = "0", Max = "1000" } )
 	pnl:AddControl( "CheckBox", { Label = "Enable Prototype of the Portals", Command = "portal_prototype" } )
@@ -29,15 +28,14 @@ local function PortalMenuSettings( pnl )
 	pnl:AddControl( "CheckBox", { Label = "Pull on All Surfaces", Command = "portal_allsurfaces" } )
 	pnl:AddControl( "CheckBox", { Label = "Location of the Portals", Command = "portal_location" } )
 	pnl:AddControl( "CheckBox", { Label = "Upside Down Portals on the Ceiling", Command = "portal_upside_down" } )
-	
+
 	pnl:ControlHelp( "In Multiplayer" ):DockMargin( 16, 16, 16, 4 )
 	pnl:AddControl( "ListBox", { Label = "Render View", Options = list.Get( "list_portaltexFSB" ) } )
 	pnl:AddControl( "CheckBox", { Label = "Render Automatic", Command = "portal_autoFSB" } )
 
-	pnl:ControlHelp( "Surmounted Console" ):DockMargin( 16, 16, 16, 4 )	
+	pnl:ControlHelp( "Surmounted Console" ):DockMargin( 16, 16, 16, 4 )
 	pnl:AddControl( "Button", { Label = "Portal Style", Command = "portal_sound 0; portal_crosshair_system 0; portal_projectile_speed 3500; portal_instant 0; portal_tryhard 0; portal_carryanim_p1 1" } )
 	pnl:AddControl( "Button", { Label = "Portal 2 Style", Command = "portal_sound 1; portal_crosshair_system 1; portal_projectile_speed 10000; portal_instant 1; portal_tryhard 1; portal_carryanim_p1 0" } )
-	
 end
 
 local function PortalsColorableMenuSettings( pnl )
