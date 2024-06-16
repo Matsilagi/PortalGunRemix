@@ -81,7 +81,7 @@ if( CLIENT ) then
 		end
    
 	end
-	hook.Add( "CreateMove PBODY", "Noclip.CreateMove PBODY", CreateMove );
+	hook.Remove( "CreateMove PBODY", "Noclip.CreateMove PBODY", CreateMove );
 
 end
 

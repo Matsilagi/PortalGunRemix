@@ -81,7 +81,7 @@ if( CLIENT ) then
 		end
    
 	end
-	hook.Add( "CreateMove ATLAS", "Noclip.CreateMove ATLAS", CreateMove );
+	hook.Remove( "CreateMove ATLAS", "Noclip.CreateMove ATLAS", CreateMove );
 
 end
 
